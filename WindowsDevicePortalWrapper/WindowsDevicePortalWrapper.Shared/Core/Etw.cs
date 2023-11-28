@@ -17,9 +17,14 @@ namespace Microsoft.Tools.WindowsDevicePortal
     public partial class DevicePortal
     {
         /// <summary>
-        /// API to create a realtime ETW session.
+        /// API to create a realtime ETW session for PC.
         /// </summary>
-        public static readonly string RealtimeEtwSessionApi = "api/etw/session/realtime";
+        public static readonly string RealtimeEtwSessionPCApi = "api/etw/session/realtime";
+
+        /// <summary>
+        /// API to create a realtime ETW session for Xbox console.
+        /// </summary>
+        public static readonly string RealtimeEtwSessionXboxApi = "ext/gameeventdata";
 
         /// <summary>
         /// API to get the list of registered custom ETW providers.
@@ -139,7 +144,10 @@ namespace Microsoft.Tools.WindowsDevicePortal
 #endif
             }
 
-            await this.realtimeEventsWebSocket.ConnectAsync(RealtimeEtwSessionApi);
+            if(this.PlatformName.Contains("Xbox"))
+                await this.realtimeEventsWebSocket.ConnectAsync(RealtimeEtwSessionXboxApi);
+            else
+                await this.realtimeEventsWebSocket.ConnectAsync(RealtimeEtwSessionPCApi);
         }
 
         /// <summary>
@@ -303,13 +311,15 @@ namespace Microsoft.Tools.WindowsDevicePortal
             /// Gets provider guid.
             /// </summary>
             [DataMember(Name = "GUID")]
-            public Guid GUID { get; private set; }
+            // TODO: Revert once XSAPI provider is confirmed to not be a custom provider
+            public Guid GUID { get; /* private */ set; }
 
             /// <summary>
             /// Gets provider name.
             /// </summary>
             [DataMember(Name = "Name")]
-            public string Name { get; private set; }
+            // TODO: Revert once XSAPI provider is confirmed to not be a custom provider
+            public string Name { get; /* private */ set; }
         }
 
 #endregion // Data contract
